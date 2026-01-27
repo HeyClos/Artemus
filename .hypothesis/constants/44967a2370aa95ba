@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/cli.py
+# hypothesis_version: 6.151.2
+
+['--config', '--dry-run', '-c', 'Available commands', '__main__', 'command', 'config.yaml', 'newsletter-generator', 'run', 'store_true', 'validate']

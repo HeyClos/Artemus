@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/config.py
+# hypothesis_version: 6.151.2
+
+[4096, 65535, '.json', '.yaml', '.yml', 'account', 'api_key_env', 'blog', 'blog_folder', 'date_range_days', 'duration', 'educational', 'email_sources', 'entertaining', 'file_sources', 'folder', 'format', 'host', 'http', 'https', 'include_sources', 'include_visual_cues', 'listicle', 'llm', 'long-form', 'max_tokens', 'model', 'name', 'news', 'notes', 'password', 'path', 'pattern', 'port', 'provider', 'rss_sources', 'style', 'summary', 'target_words', 'tiktok', 'tiktok_folder', 'url', 'use_ssl', 'username', 'utf-8']

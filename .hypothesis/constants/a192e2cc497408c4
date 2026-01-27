@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/models.py
+# hypothesis_version: 6.151.2
+
+['author', 'blog_exported', 'call_to_action', 'content', 'date_range', 'description', 'dry_run', 'duration_seconds', 'error', 'errors', 'fallback_path', 'folder', 'full_script', 'generated_at', 'hook', 'html_content', 'items', 'key_points', 'main_points', 'note_id', 'overall_summary', 'published_date', 'source_count', 'source_name', 'source_type', 'sources', 'success', 'tiktok_exported', 'title', 'topic', 'topics', 'trending_themes', 'url', 'visual_cues', 'word_count']
