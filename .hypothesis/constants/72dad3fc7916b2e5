@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/synthesizer.py
+# hypothesis_version: 6.151.2
+
+[0.7, 1.0, 400, 429, 500, 4096, '\n\n---\n\n', '...', 'General Tech News', 'Other News', 'Unknown Topic', '```', '```json', 'content', 'description', 'item_indices', 'role', 'system', 'topic', 'user']

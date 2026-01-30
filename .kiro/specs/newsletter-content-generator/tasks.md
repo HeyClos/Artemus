@@ -72,41 +72,41 @@ This plan implements a macOS Python application that aggregates tech newsletters
     - Parse email content using email.message module
     - _Requirements: 1.1, 2.2_
 
-  - [ ] 5.4 Implement RSSFetcher class
+  - [x] 5.4 Implement RSSFetcher class
     - Use feedparser library to fetch and parse RSS feeds
     - Extract title, summary, content, and published date
     - _Requirements: 1.2, 2.3_
 
-  - [ ] 5.5 Implement FileFetcher class
+  - [x] 5.5 Implement FileFetcher class
     - Read files matching glob pattern
     - Support HTML and plain text files
     - _Requirements: 1.3_
 
-  - [ ] 5.6 Implement NewsletterAggregator class
+  - [x] 5.6 Implement NewsletterAggregator class
     - Coordinate multiple fetchers
     - Implement date range filtering
     - Handle source failures gracefully, continue with remaining sources
     - _Requirements: 1.4, 1.5, 2.1, 2.5_
 
-  - [ ] 5.7 Write property test for date range filtering
+  - [x] 5.7 Write property test for date range filtering
     - **Property 3: Date Range Filtering**
     - **Validates: Requirements 2.1**
 
-  - [ ] 5.8 Write property test for source failure resilience
+  - [x] 5.8 Write property test for source failure resilience
     - **Property 5: Source Failure Resilience**
     - **Validates: Requirements 1.5, 2.5**
 
-- [ ] 6. Checkpoint - Verify aggregator
+- [x] 6. Checkpoint - Verify aggregator
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 7. Implement content synthesizer
-  - [ ] 7.1 Implement LLMClient protocol and OpenAIClient
+- [-] 7. Implement content synthesizer
+  - [x] 7.1 Implement LLMClient protocol and OpenAIClient
     - Define LLMClient protocol with complete() method
     - Implement OpenAIClient using openai library
     - Handle API errors and rate limiting with retries
     - _Requirements: 3.4_
 
-  - [ ] 7.2 Implement ContentSynthesizer class
+  - [x] 7.2 Implement ContentSynthesizer class
     - Implement group_by_topic() using LLM to cluster content
     - Implement extract_key_points() for each topic group
     - Implement generate_summary() for overall synthesis

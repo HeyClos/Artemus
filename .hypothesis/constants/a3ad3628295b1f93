@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/aggregator.py
+# hypothesis_version: 6.151.2
+
+['%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%S%z', '%Y-%m-%dT%H:%M:%SZ', '%d %b %Y %H:%M:%S', '%d %b %Y %H:%M:%S %z', '%d-%b-%Y', '(?i)read\\s+online', '(?i)view\\s+online', '(No Subject)', '(No Title)', '(RFC822)', '<', '>', 'Content-Disposition', 'Date', 'From', 'OK', 'Subject', '[ \\t]+', '\\n\\s*\\n+', '\\n{3,}', 'article', 'attachment', 'author', 'author_detail', 'authors', 'br', 'class', 'content', 'created', 'created_parsed', 'description', 'div', 'email', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'html', 'id', 'iframe', 'li', 'link', 'lxml', 'name', 'nav', 'noscript', 'p', 'published', 'published_parsed', 'replace', 'rss', 'script', 'section', 'style', 'summary', 'summary_detail', 'text', 'text/html', 'text/plain', 'title', 'tr', 'type', 'updated', 'updated_parsed', 'utf-8', 'value']

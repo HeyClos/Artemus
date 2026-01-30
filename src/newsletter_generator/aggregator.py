@@ -563,6 +563,9 @@ class RSSFetcher:
     
     Attributes:
         config: RSS source configuration
+        parser: ContentParser for extracting text from HTML content
+        
+    Validates: Requirements 1.2, 2.3
     """
     
     def __init__(self, config: RSSSourceConfig) -> None:
@@ -572,26 +575,307 @@ class RSSFetcher:
             config: RSS source configuration
         """
         self.config = config
+        self.parser = ContentParser()
     
     def fetch(self, since: datetime) -> list[NewsletterItem]:
         """Fetch RSS feed entries since the given date.
+        
+        Connects to the RSS feed URL, parses entries, and returns
+        NewsletterItem objects for entries published after the since date.
         
         Args:
             since: Only fetch entries published after this date
             
         Returns:
-            List of newsletter items parsed from feed entries
+            List of newsletter items parsed from feed entries. Returns empty
+            list if the feed cannot be fetched or parsed.
+            
+        Validates: Requirements 1.2, 1.5, 2.3
         """
-        raise NotImplementedError("RSSFetcher.fetch() not yet implemented")
+        # Import here to avoid circular imports
+        from newsletter_generator.models import NewsletterItem
+        
+        import feedparser
+        
+        items: list[NewsletterItem] = []
+        
+        try:
+            # Fetch and parse the RSS feed
+            feed = feedparser.parse(self.config.url)
+            
+            # Check for feed-level errors
+            if feed.bozo and feed.bozo_exception:
+                # bozo flag indicates a feed parsing issue
+                # Log but continue - feedparser often recovers partial data
+                logger.warning(
+                    f"RSS feed '{self.config.name}' ({self.config.url}) "
+                    f"has parsing issues: {feed.bozo_exception}"
+                )
+            
+            # Check if feed has entries
+            if not feed.entries:
+                logger.info(
+                    f"RSS feed '{self.config.name}' ({self.config.url}) "
+                    "has no entries"
+                )
+                return items
+            
+            # Process each entry
+            for entry in feed.entries:
+                try:
+                    # Extract published date
+                    published_date = self._parse_entry_date(entry)
+                    if published_date is None:
+                        # Use current time if no date available
+                        published_date = datetime.now()
+                    
+                    # Filter by date - skip entries before the since date
+                    # Handle timezone-aware vs naive datetime comparison
+                    since_for_comparison = since
+                    published_for_comparison = published_date
+                    
+                    if published_date.tzinfo is not None and since.tzinfo is None:
+                        published_for_comparison = published_date.replace(tzinfo=None)
+                    elif published_date.tzinfo is None and since.tzinfo is not None:
+                        since_for_comparison = since.replace(tzinfo=None)
+                    
+                    if published_for_comparison < since_for_comparison:
+                        continue
+                    
+                    # Extract title
+                    title = entry.get("title", "").strip()
+                    if not title:
+                        title = "(No Title)"
+                    
+                    # Extract content - try multiple fields
+                    html_content, text_content = self._extract_entry_content(entry)
+                    
+                    # Parse HTML content if available
+                    if html_content:
+                        content = self.parser.extract_text(html_content)
+                        content = self.parser.clean_content(content)
+                    elif text_content:
+                        content = self.parser.clean_content(text_content)
+                    else:
+                        # Use summary as fallback
+                        summary = entry.get("summary", "")
+                        if summary:
+                            content = self.parser.extract_text(summary)
+                            content = self.parser.clean_content(content)
+                            html_content = summary if "<" in summary else None
+                        else:
+                            content = ""
+                    
+                    # Extract author
+                    author = self._extract_author(entry)
+                    
+                    # Extract URL
+                    url = entry.get("link", None)
+                    
+                    # Create NewsletterItem
+                    item = NewsletterItem(
+                        source_name=self.config.name,
+                        source_type="rss",
+                        title=title,
+                        content=content,
+                        published_date=published_date,
+                        html_content=html_content,
+                        author=author,
+                        url=url,
+                    )
+                    items.append(item)
+                    
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to parse RSS entry from '{self.config.name}': {e}"
+                    )
+                    continue
+                    
+        except Exception as e:
+            logger.error(
+                f"Failed to fetch RSS feed '{self.config.name}' "
+                f"({self.config.url}): {e}"
+            )
+        
+        return items
+    
+    def _parse_entry_date(self, entry: dict) -> datetime | None:
+        """Parse the published date from an RSS entry.
+        
+        Tries multiple date fields commonly used in RSS/Atom feeds.
+        
+        Args:
+            entry: The feedparser entry dict
+            
+        Returns:
+            Parsed datetime or None if no valid date found
+        """
+        import time
+        from calendar import timegm
+        
+        # Try different date fields in order of preference
+        date_fields = [
+            "published_parsed",
+            "updated_parsed",
+            "created_parsed",
+        ]
+        
+        for field in date_fields:
+            parsed_time = entry.get(field)
+            if parsed_time:
+                try:
+                    # feedparser returns time.struct_time
+                    # Convert to datetime
+                    timestamp = timegm(parsed_time)
+                    return datetime.utcfromtimestamp(timestamp)
+                except (ValueError, TypeError, OverflowError):
+                    continue
+        
+        # Try string date fields as fallback
+        string_date_fields = ["published", "updated", "created"]
+        for field in string_date_fields:
+            date_str = entry.get(field)
+            if date_str:
+                parsed = self._parse_date_string(date_str)
+                if parsed:
+                    return parsed
+        
+        return None
+    
+    def _parse_date_string(self, date_str: str) -> datetime | None:
+        """Parse a date string into a datetime object.
+        
+        Args:
+            date_str: The date string to parse
+            
+        Returns:
+            Parsed datetime or None if parsing fails
+        """
+        if not date_str:
+            return None
+        
+        # Common date formats in RSS feeds
+        date_formats = [
+            "%a, %d %b %Y %H:%M:%S %z",  # RFC 2822
+            "%a, %d %b %Y %H:%M:%S",
+            "%Y-%m-%dT%H:%M:%S%z",  # ISO 8601 with timezone
+            "%Y-%m-%dT%H:%M:%SZ",  # ISO 8601 UTC
+            "%Y-%m-%dT%H:%M:%S",  # ISO 8601 without timezone
+            "%Y-%m-%d %H:%M:%S",
+            "%Y-%m-%d",
+            "%d %b %Y %H:%M:%S %z",
+            "%d %b %Y %H:%M:%S",
+        ]
+        
+        for fmt in date_formats:
+            try:
+                return datetime.strptime(date_str.strip(), fmt)
+            except ValueError:
+                continue
+        
+        logger.debug(f"Failed to parse RSS date: {date_str}")
+        return None
+    
+    def _extract_entry_content(self, entry: dict) -> tuple[str | None, str | None]:
+        """Extract content from an RSS entry.
+        
+        Tries multiple content fields and returns both HTML and plain text
+        versions if available.
+        
+        Args:
+            entry: The feedparser entry dict
+            
+        Returns:
+            Tuple of (html_content, text_content), either may be None
+        """
+        html_content: str | None = None
+        text_content: str | None = None
+        
+        # Try 'content' field first (often contains full article)
+        content_list = entry.get("content", [])
+        if content_list:
+            for content_item in content_list:
+                content_type = content_item.get("type", "")
+                value = content_item.get("value", "")
+                
+                if "html" in content_type.lower():
+                    html_content = value
+                elif "text" in content_type.lower() or not content_type:
+                    if "<" in value and ">" in value:
+                        html_content = value
+                    else:
+                        text_content = value
+        
+        # Try 'summary_detail' for more detailed summary
+        if not html_content and not text_content:
+            summary_detail = entry.get("summary_detail", {})
+            if summary_detail:
+                content_type = summary_detail.get("type", "")
+                value = summary_detail.get("value", "")
+                
+                if value:
+                    if "html" in content_type.lower() or ("<" in value and ">" in value):
+                        html_content = value
+                    else:
+                        text_content = value
+        
+        # Fall back to 'description' field
+        if not html_content and not text_content:
+            description = entry.get("description", "")
+            if description:
+                if "<" in description and ">" in description:
+                    html_content = description
+                else:
+                    text_content = description
+        
+        return html_content, text_content
+    
+    def _extract_author(self, entry: dict) -> str | None:
+        """Extract author information from an RSS entry.
+        
+        Args:
+            entry: The feedparser entry dict
+            
+        Returns:
+            Author name or None if not available
+        """
+        # Try 'author' field first
+        author = entry.get("author")
+        if author:
+            return author.strip()
+        
+        # Try 'author_detail' for more structured author info
+        author_detail = entry.get("author_detail", {})
+        if author_detail:
+            name = author_detail.get("name")
+            if name:
+                return name.strip()
+        
+        # Try 'authors' list
+        authors = entry.get("authors", [])
+        if authors:
+            first_author = authors[0]
+            if isinstance(first_author, dict):
+                name = first_author.get("name")
+                if name:
+                    return name.strip()
+            elif isinstance(first_author, str):
+                return first_author.strip()
+        
+        return None
 
 
 class FileFetcher:
     """Fetches newsletters from local files.
     
     Reads newsletter content from local files matching a glob pattern.
+    Supports both HTML and plain text files.
     
     Attributes:
         config: File source configuration
+        parser: ContentParser for extracting text from HTML files
+        
+    Validates: Requirements 1.3
     """
     
     def __init__(self, config: FileSourceConfig) -> None:
@@ -601,17 +885,171 @@ class FileFetcher:
             config: File source configuration
         """
         self.config = config
+        self.parser = ContentParser()
     
     def fetch(self, since: datetime) -> list[NewsletterItem]:
         """Fetch newsletter content from local files.
+        
+        Reads files matching the configured glob pattern from the configured
+        directory path. Only files modified after the since date are included.
         
         Args:
             since: Only fetch files modified after this date
             
         Returns:
-            List of newsletter items parsed from files
+            List of newsletter items parsed from files. Returns empty list
+            if the directory doesn't exist or no matching files are found.
+            
+        Validates: Requirements 1.3, 1.5
         """
-        raise NotImplementedError("FileFetcher.fetch() not yet implemented")
+        # Import here to avoid circular imports
+        from newsletter_generator.models import NewsletterItem
+        from pathlib import Path
+        import os
+        
+        items: list[NewsletterItem] = []
+        
+        try:
+            # Expand user home directory (~) in path
+            base_path = Path(self.config.path).expanduser()
+            
+            # Check if directory exists
+            if not base_path.exists():
+                logger.warning(
+                    f"File source directory does not exist: {self.config.path}"
+                )
+                return items
+            
+            if not base_path.is_dir():
+                logger.warning(
+                    f"File source path is not a directory: {self.config.path}"
+                )
+                return items
+            
+            # Find files matching the glob pattern
+            matching_files = list(base_path.glob(self.config.pattern))
+            
+            if not matching_files:
+                logger.info(
+                    f"No files matching pattern '{self.config.pattern}' "
+                    f"found in {self.config.path}"
+                )
+                return items
+            
+            # Process each matching file
+            for file_path in matching_files:
+                try:
+                    # Skip directories
+                    if file_path.is_dir():
+                        continue
+                    
+                    # Get file modification time
+                    mtime = datetime.fromtimestamp(file_path.stat().st_mtime)
+                    
+                    # Filter by modification date
+                    # Handle timezone-aware vs naive datetime comparison
+                    since_for_comparison = since
+                    mtime_for_comparison = mtime
+                    
+                    if mtime.tzinfo is not None and since.tzinfo is None:
+                        mtime_for_comparison = mtime.replace(tzinfo=None)
+                    elif mtime.tzinfo is None and since.tzinfo is not None:
+                        since_for_comparison = since.replace(tzinfo=None)
+                    
+                    if mtime_for_comparison < since_for_comparison:
+                        continue
+                    
+                    # Read file content
+                    content, html_content = self._read_file(file_path)
+                    
+                    if not content and not html_content:
+                        logger.warning(
+                            f"Empty or unreadable file: {file_path}"
+                        )
+                        continue
+                    
+                    # Create NewsletterItem
+                    item = NewsletterItem(
+                        source_name=f"File: {self.config.path}",
+                        source_type="file",
+                        title=file_path.stem,  # Filename without extension
+                        content=content,
+                        published_date=mtime,
+                        html_content=html_content,
+                        author=None,
+                        url=str(file_path.absolute()),
+                    )
+                    items.append(item)
+                    
+                except PermissionError as e:
+                    logger.error(
+                        f"Permission denied reading file {file_path}: {e}"
+                    )
+                    continue
+                except OSError as e:
+                    logger.warning(
+                        f"Failed to read file {file_path}: {e}"
+                    )
+                    continue
+                except Exception as e:
+                    logger.warning(
+                        f"Unexpected error processing file {file_path}: {e}"
+                    )
+                    continue
+                    
+        except PermissionError as e:
+            logger.error(
+                f"Permission denied accessing directory {self.config.path}: {e}"
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to access file source directory {self.config.path}: {e}"
+            )
+        
+        return items
+    
+    def _read_file(self, file_path) -> tuple[str, str | None]:
+        """Read and parse content from a file.
+        
+        Detects file type based on extension and parses accordingly.
+        HTML files are parsed to extract text content.
+        
+        Args:
+            file_path: Path to the file to read
+            
+        Returns:
+            Tuple of (plain_text_content, html_content).
+            html_content is None for non-HTML files.
+        """
+        from pathlib import Path
+        
+        # Determine file type from extension
+        suffix = Path(file_path).suffix.lower()
+        
+        # Read file content
+        try:
+            # Try UTF-8 first, fall back to latin-1
+            try:
+                raw_content = Path(file_path).read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                raw_content = Path(file_path).read_text(encoding="latin-1")
+        except Exception as e:
+            logger.warning(f"Failed to read file {file_path}: {e}")
+            return "", None
+        
+        if not raw_content.strip():
+            return "", None
+        
+        # Parse based on file type
+        if suffix in (".html", ".htm"):
+            # HTML file - extract text and keep original HTML
+            text_content = self.parser.extract_text(raw_content)
+            text_content = self.parser.clean_content(text_content)
+            return text_content, raw_content
+        else:
+            # Plain text file (or unknown type) - clean the content
+            text_content = self.parser.clean_content(raw_content)
+            return text_content, None
 
 
 class NewsletterAggregator:
@@ -623,33 +1061,170 @@ class NewsletterAggregator:
     Attributes:
         fetchers: List of source fetchers to use
         parser: Content parser for normalizing content
+        
+    Validates: Requirements 1.4, 1.5, 2.1, 2.5
     """
     
     def __init__(
         self,
         fetchers: list[SourceFetcher],
-        parser: ContentParser,
+        parser: ContentParser | None = None,
     ) -> None:
         """Initialize the aggregator.
         
         Args:
             fetchers: List of source fetchers
-            parser: Content parser for normalizing content
+            parser: Content parser for normalizing content (optional, creates default if None)
         """
         self.fetchers = fetchers
-        self.parser = parser
+        self.parser = parser if parser is not None else ContentParser()
     
     def aggregate(self, since: datetime) -> list[NewsletterItem]:
         """Aggregate newsletters from all configured sources.
         
         Fetches from all sources, handles failures gracefully (logging
         errors and continuing with remaining sources), and returns
-        normalized items.
+        normalized items filtered by date range.
         
         Args:
             since: Only fetch items published after this date
             
         Returns:
             List of aggregated and normalized newsletter items
+            
+        Validates: Requirements 1.4, 1.5, 2.1, 2.5
         """
-        raise NotImplementedError("NewsletterAggregator.aggregate() not yet implemented")
+        # Import here to avoid circular imports
+        from newsletter_generator.models import NewsletterItem
+        
+        all_items: list[NewsletterItem] = []
+        
+        # Iterate through all fetchers and collect items
+        for fetcher in self.fetchers:
+            try:
+                # Fetch items from this source
+                items = fetcher.fetch(since)
+                
+                # Filter items by date range (additional safety check)
+                # Some fetchers may return items outside the date range
+                filtered_items = self._filter_by_date(items, since)
+                
+                # Normalize content for each item
+                normalized_items = [
+                    self._normalize_item(item) for item in filtered_items
+                ]
+                
+                all_items.extend(normalized_items)
+                
+                logger.info(
+                    f"Fetched {len(normalized_items)} items from "
+                    f"{self._get_fetcher_name(fetcher)}"
+                )
+                
+            except Exception as e:
+                # Log the error and continue with remaining sources
+                # This ensures one failing source doesn't break the entire aggregation
+                fetcher_name = self._get_fetcher_name(fetcher)
+                logger.error(
+                    f"Failed to fetch from {fetcher_name}: {e}"
+                )
+                # Continue to next fetcher - don't re-raise
+                continue
+        
+        logger.info(f"Aggregated {len(all_items)} total items from {len(self.fetchers)} sources")
+        
+        return all_items
+    
+    def _filter_by_date(
+        self,
+        items: list[NewsletterItem],
+        since: datetime,
+    ) -> list[NewsletterItem]:
+        """Filter items to only include those published after the since date.
+        
+        Handles timezone-aware and timezone-naive datetime comparisons.
+        
+        Args:
+            items: List of newsletter items to filter
+            since: Only include items published after this date
+            
+        Returns:
+            Filtered list of items
+            
+        Validates: Requirements 2.1
+        """
+        filtered: list[NewsletterItem] = []
+        
+        for item in items:
+            # Handle timezone-aware vs naive datetime comparison
+            published = item.published_date
+            since_cmp = since
+            
+            if published.tzinfo is not None and since.tzinfo is None:
+                # Remove timezone info from published for comparison
+                published = published.replace(tzinfo=None)
+            elif published.tzinfo is None and since.tzinfo is not None:
+                # Remove timezone info from since for comparison
+                since_cmp = since.replace(tzinfo=None)
+            
+            # Include items published on or after the since date
+            if published >= since_cmp:
+                filtered.append(item)
+        
+        return filtered
+    
+    def _normalize_item(self, item: NewsletterItem) -> NewsletterItem:
+        """Normalize a newsletter item's content.
+        
+        Ensures content is cleaned and normalized using the content parser.
+        
+        Args:
+            item: The newsletter item to normalize
+            
+        Returns:
+            A new NewsletterItem with normalized content
+            
+        Validates: Requirements 2.4
+        """
+        from newsletter_generator.models import NewsletterItem
+        
+        # Clean the content using the parser
+        normalized_content = self.parser.clean_content(item.content)
+        
+        # Return a new item with normalized content
+        return NewsletterItem(
+            source_name=item.source_name,
+            source_type=item.source_type,
+            title=item.title,
+            content=normalized_content,
+            published_date=item.published_date,
+            html_content=item.html_content,
+            author=item.author,
+            url=item.url,
+        )
+    
+    def _get_fetcher_name(self, fetcher: SourceFetcher) -> str:
+        """Get a human-readable name for a fetcher.
+        
+        Args:
+            fetcher: The fetcher to get a name for
+            
+        Returns:
+            A descriptive name for the fetcher
+        """
+        # Try to get a descriptive name based on fetcher type and config
+        fetcher_type = type(fetcher).__name__
+        
+        # Try to get more specific info from config if available
+        if hasattr(fetcher, 'config'):
+            config = fetcher.config
+            if hasattr(config, 'name'):
+                return f"{fetcher_type}({config.name})"
+            elif hasattr(config, 'host'):
+                return f"{fetcher_type}({config.host})"
+            elif hasattr(config, 'url'):
+                return f"{fetcher_type}({config.url})"
+            elif hasattr(config, 'path'):
+                return f"{fetcher_type}({config.path})"
+        
+        return fetcher_type

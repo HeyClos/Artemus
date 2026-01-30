@@ -44,7 +44,10 @@ from newsletter_generator.aggregator import (
 # Synthesis
 from newsletter_generator.synthesizer import (
     ContentSynthesizer,
+    LLMAPIError,
     LLMClient,
+    LLMError,
+    LLMRateLimitError,
     OpenAIClient,
 )
 
@@ -90,7 +93,10 @@ __all__ = [
     "SourceFetcher",
     # Synthesis
     "ContentSynthesizer",
+    "LLMAPIError",
     "LLMClient",
+    "LLMError",
+    "LLMRateLimitError",
     "OpenAIClient",
     # Generation
     "BlogGenerator",
