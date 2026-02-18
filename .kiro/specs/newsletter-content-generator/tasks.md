@@ -201,7 +201,7 @@ This plan implements a macOS Python application that aggregates tech newsletters
     - CLI usage examples
     - _Requirements: 7.1_
 
-- [ ] 13. Final checkpoint - Full integration verification
+- [x] 13. Final checkpoint - Full integration verification
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
