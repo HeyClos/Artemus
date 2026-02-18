@@ -114,8 +114,8 @@ This plan implements a macOS Python application that aggregates tech newsletters
     - Handle duplicate content detection and merging
     - _Requirements: 3.1, 3.2, 3.3, 3.5_
 
-- [ ] 8. Implement content generators
-  - [ ] 8.1 Implement BlogGenerator class
+- [x] 8. Implement content generators
+  - [x] 8.1 Implement BlogGenerator class
     - Implement generate() method with format-specific prompts
     - Support long-form, summary, and listicle formats
     - Include source attribution in generated content
@@ -123,34 +123,34 @@ This plan implements a macOS Python application that aggregates tech newsletters
     - Output in Markdown format
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-  - [ ] 8.2 Write property test for blog post structure
+  - [x] 8.2 Write property test for blog post structure
     - **Property 6: Blog Post Structure**
     - **Validates: Requirements 4.2, 4.3**
 
-  - [ ] 8.3 Write property test for blog word count targeting
+  - [x] 8.3 Write property test for blog word count targeting
     - **Property 7: Blog Word Count Targeting**
     - **Validates: Requirements 4.4**
 
-  - [ ] 8.4 Implement TikTokScriptGenerator class
+  - [x] 8.4 Implement TikTokScriptGenerator class
     - Implement generate() method with duration-specific prompts
     - Structure output with hook, main points, call-to-action
     - Include visual cues when configured
     - Target script length based on duration (15/30/60 seconds)
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-  - [ ] 8.5 Write property test for TikTok script structure
+  - [x] 8.5 Write property test for TikTok script structure
     - **Property 8: TikTok Script Structure**
     - **Validates: Requirements 5.2, 5.3**
 
-  - [ ] 8.6 Write property test for TikTok duration targeting
+  - [x] 8.6 Write property test for TikTok duration targeting
     - **Property 9: TikTok Duration Targeting**
     - **Validates: Requirements 5.1**
 
-  - [ ] 8.7 Write property test for visual cues conditional
+  - [x] 8.7 Write property test for visual cues conditional
     - **Property 10: Visual Cues Conditional**
     - **Validates: Requirements 5.5**
 
-- [ ] 9. Checkpoint - Verify generators
+- [x] 9. Checkpoint - Verify generators
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Implement Apple Notes exporter

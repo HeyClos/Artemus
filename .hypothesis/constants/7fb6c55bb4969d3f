@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/generators.py
+# hypothesis_version: 6.151.2
+
+[150, '\n\n---\n\n## Sources\n\n', '"', '#', '-', '-•', ':', 'Show trending topics', 'Tech Update', 'Tech news update', '[#*_`\\[\\]()>-]', '```', '```json', 'action', 'call', 'call_to_action', 'cta', 'educational', 'entertaining', 'hook', 'https?://\\S+', 'listicle', 'long-form', 'main_points', 'news', 'point', 'summary', 'title', 'visual', 'visual_cues', '•']
