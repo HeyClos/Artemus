@@ -1,0 +1,142 @@
+# Newsletter Content Generator - Example Configuration
+# =====================================================
+#
+# This configuration file controls all aspects of the newsletter content generator.
+# Copy this file to 'config.yaml' and customize it for your needs.
+#
+# Environment Variables:
+# ----------------------
+# Sensitive values like API keys and passwords can be stored in environment variables.
+# Use the ${ENV_VAR_NAME} syntax to reference them in this file.
+#
+# Example:
+#   password: ${GMAIL_APP_PASSWORD}
+#
+# Required environment variables for this example:
+#   - OPENAI_API_KEY: Your OpenAI API key
+#   - GMAIL_APP_PASSWORD: Gmail app-specific password (if using email source)
+
+# =============================================================================
+# NEWSLETTER SOURCES
+# =============================================================================
+# Configure one or more sources to aggregate newsletters from.
+# At least one source (email, RSS, or file) must be configured.
+
+# Email Sources
+# -------------
+# Fetch newsletters from email accounts via IMAP.
+# Supports Gmail, Outlook, and other IMAP-compatible providers.
+email_sources:
+  - host: imap.gmail.com           # IMAP server hostname
+    port: 993                       # IMAP port (993 for SSL, 143 for non-SSL)
+    username: your.email@gmail.com  # Email account username
+    password: ${GMAIL_APP_PASSWORD} # Password (use env var for security)
+    folder: Newsletters             # Email folder to fetch from
+    use_ssl: true                   # Use SSL/TLS connection (recommended)
+
+  # Example: Additional email source (Outlook)
+  # - host: outlook.office365.com
+  #   port: 993
+  #   username: your.email@outlook.com
+  #   password: ${OUTLOOK_PASSWORD}
+  #   folder: INBOX/Newsletters
+  #   use_ssl: true
+
+# RSS Feed Sources
+# ----------------
+# Fetch content from RSS/Atom feeds.
+# Great for tech blogs and news sites.
+rss_sources:
+  - name: TechCrunch               # Human-readable name for attribution
+    url: https://techcrunch.com/feed/
+
+  - name: Hacker News
+    url: https://news.ycombinator.com/rss
+
+  - name: The Verge
+    url: https://www.theverge.com/rss/index.xml
+
+  # Add more RSS feeds as needed:
+  # - name: Ars Technica
+  #   url: https://feeds.arstechnica.com/arstechnica/index
+
+# Local File Sources
+# ------------------
+# Read newsletters from local files (HTML or plain text).
+# Useful for archived newsletters or manual imports.
+file_sources:
+  - path: ~/newsletters            # Directory containing newsletter files
+    pattern: "*.html"              # Glob pattern to match files
+
+  # Example: Multiple patterns
+  # - path: ~/Documents/tech-news
+  #   pattern: "*.txt"
+
+# =============================================================================
+# LLM CONFIGURATION
+# =============================================================================
+# Configure the Large Language Model used for content synthesis and generation.
+
+llm:
+  provider: openai                 # LLM provider: "openai" (more providers coming)
+  model: gpt-4o                    # Model to use (gpt-4o, gpt-4-turbo, gpt-3.5-turbo)
+  api_key_env: OPENAI_API_KEY      # Environment variable containing API key
+  max_tokens: 4096                 # Maximum tokens for LLM responses
+
+# =============================================================================
+# BLOG POST GENERATION
+# =============================================================================
+# Configure how blog posts are generated from synthesized content.
+
+blog:
+  # Format options:
+  #   - "long-form": Detailed analysis with multiple sections
+  #   - "summary": Concise overview of key points
+  #   - "listicle": List-based format (e.g., "Top 10 Tech Trends")
+  format: long-form
+
+  # Target word count for generated posts
+  # The actual count may vary by ~20% based on content
+  target_words: 1000
+
+  # Include source attributions in the generated content
+  include_sources: true
+
+# =============================================================================
+# TIKTOK SCRIPT GENERATION
+# =============================================================================
+# Configure how TikTok video scripts are generated.
+
+tiktok:
+  # Target duration in seconds
+  # Valid options: 15, 30, or 60
+  duration: 60
+
+  # Include visual cues and on-screen text suggestions
+  # Set to false for audio-only scripts
+  include_visual_cues: true
+
+  # Script style:
+  #   - "educational": Informative, teaching-focused
+  #   - "entertaining": Fun, engaging, casual
+  #   - "news": Breaking news, urgent tone
+  style: educational
+
+# =============================================================================
+# APPLE NOTES EXPORT
+# =============================================================================
+# Configure where generated content is saved in Apple Notes.
+# Requires macOS with Notes.app.
+
+notes:
+  account: iCloud                  # Apple Notes account (iCloud, On My Mac, etc.)
+  blog_folder: Generated Blog Posts    # Folder for blog posts
+  tiktok_folder: TikTok Scripts        # Folder for TikTok scripts
+
+# =============================================================================
+# GENERAL SETTINGS
+# =============================================================================
+
+# Number of days to look back when fetching newsletters
+# Only content published within this range will be processed
+date_range_days: 7

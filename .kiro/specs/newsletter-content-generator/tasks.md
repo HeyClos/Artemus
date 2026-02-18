@@ -188,14 +188,14 @@ This plan implements a macOS Python application that aggregates tech newsletters
     - Provide progress output during execution
     - _Requirements: 7.1, 7.3_
 
-- [ ] 12. Create example configuration and documentation
-  - [ ] 12.1 Create example config.yaml
+- [x] 12. Create example configuration and documentation
+  - [x] 12.1 Create example config.yaml
     - Include all configuration options with comments
     - Provide sensible defaults
     - Document environment variable usage
     - _Requirements: 8.1, 8.2, 8.3, 8.5_
 
-  - [ ] 12.2 Create README.md with usage instructions
+  - [x] 12.2 Create README.md with usage instructions
     - Installation steps
     - Configuration guide
     - CLI usage examples
