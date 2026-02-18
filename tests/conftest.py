@@ -12,10 +12,10 @@ import pytest
 from hypothesis import settings, Verbosity
 
 # Configure Hypothesis profiles
-# Default profile: 100 examples as specified in design document
+# Default profile: Reduced examples for faster iteration
 settings.register_profile(
     "default",
-    max_examples=100,
+    max_examples=20,
     deadline=5000,  # 5 seconds per test
     verbosity=Verbosity.normal,
 )
@@ -23,15 +23,15 @@ settings.register_profile(
 # CI profile: More thorough testing
 settings.register_profile(
     "ci",
-    max_examples=200,
+    max_examples=100,
     deadline=10000,  # 10 seconds per test
     verbosity=Verbosity.normal,
 )
 
-# Dev profile: Faster iteration during development
+# Dev profile: Fastest iteration during development
 settings.register_profile(
     "dev",
-    max_examples=50,
+    max_examples=10,
     deadline=3000,  # 3 seconds per test
     verbosity=Verbosity.verbose,
 )

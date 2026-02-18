@@ -170,19 +170,19 @@ This plan implements a macOS Python application that aggregates tech newsletters
     - **Property 12: Fallback on Notes Failure**
     - **Validates: Requirements 6.5**
 
-- [ ] 11. Implement application orchestrator and CLI
-  - [ ] 11.1 Implement NewsletterContentGenerator orchestrator
+- [x] 11. Implement application orchestrator and CLI
+  - [x] 11.1 Implement NewsletterContentGenerator orchestrator
     - Implement _setup_components() to initialize all pipeline components
     - Implement run() method to execute full pipeline
     - Implement _report_progress() for user feedback
     - Support dry-run mode
     - _Requirements: 7.1, 7.3, 7.4_
 
-  - [ ] 11.2 Write property test for dry-run mode
+  - [x] 11.2 Write property test for dry-run mode
     - **Property 13: Dry-Run Mode**
     - **Validates: Requirements 7.4**
 
-  - [ ] 11.3 Implement CLI using argparse or click
+  - [x] 11.3 Implement CLI using argparse or click
     - Add run command with --config, --dry-run options
     - Add validate command to check configuration
     - Provide progress output during execution

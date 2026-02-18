@@ -60,6 +60,9 @@ from newsletter_generator.generators import (
 # Export
 from newsletter_generator.exporter import NotesExporter
 
+# Orchestrator
+from newsletter_generator.orchestrator import NewsletterContentGenerator
+
 # CLI
 from newsletter_generator.cli import main
 
@@ -103,6 +106,8 @@ __all__ = [
     "TikTokScriptGenerator",
     # Export
     "NotesExporter",
+    # Orchestrator
+    "NewsletterContentGenerator",
     # CLI
     "main",
 ]

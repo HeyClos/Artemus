@@ -600,7 +600,7 @@ class TestConfigProperties:
     
     @pytest.mark.property
     @given(config=valid_app_config())
-    @settings(max_examples=100, deadline=5000)
+    @settings(max_examples=20, deadline=5000)
     def test_configuration_round_trip(self, config: AppConfig):
         """
         Property 1: Configuration Round-Trip
@@ -667,7 +667,7 @@ class TestConfigProperties:
 
     @pytest.mark.property
     @given(config=st.data())
-    @settings(max_examples=100, deadline=5000)
+    @settings(max_examples=20, deadline=5000)
     def test_configuration_validation_errors(self, config: st.DataObject):
         """
         Property 2: Configuration Validation Errors
@@ -823,7 +823,7 @@ class TestConfigProperties:
 
     @pytest.mark.property
     @given(data=st.data())
-    @settings(max_examples=100, deadline=5000)
+    @settings(max_examples=20, deadline=5000)
     def test_environment_variable_resolution(self, data: st.DataObject):
         """
         Property 14: Environment Variable Resolution

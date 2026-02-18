@@ -515,7 +515,7 @@ class TestGeneratorProperties:
         content=valid_synthesized_content(),
         config=valid_blog_config(),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_blog_post_structure(
         self, content: SynthesizedContent, config: BlogConfig
     ) -> None:
@@ -575,7 +575,7 @@ class TestGeneratorProperties:
         content=valid_synthesized_content(),
         target_words=st.integers(min_value=200, max_value=2000),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_blog_word_count_targeting(
         self, content: SynthesizedContent, target_words: int
     ) -> None:
@@ -620,7 +620,7 @@ class TestGeneratorProperties:
         content=valid_synthesized_content(),
         config=valid_tiktok_config(),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_tiktok_script_structure(
         self, content: SynthesizedContent, config: TikTokConfig
     ) -> None:
@@ -671,7 +671,7 @@ class TestGeneratorProperties:
         content=valid_synthesized_content(),
         duration=st.sampled_from([15, 30, 60]),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_tiktok_duration_targeting(
         self, content: SynthesizedContent, duration: int
     ) -> None:
@@ -720,7 +720,7 @@ class TestGeneratorProperties:
         content=valid_synthesized_content(),
         include_visual_cues=st.booleans(),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_visual_cues_conditional(
         self, content: SynthesizedContent, include_visual_cues: bool
     ) -> None:

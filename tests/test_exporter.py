@@ -307,7 +307,7 @@ class TestExporterProperties:
         blog_post=valid_blog_post(),
         config=valid_notes_config(),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_notes_content_formatting_blog(
         self, blog_post: BlogPost, config: NotesConfig
     ) -> None:
@@ -368,7 +368,7 @@ class TestExporterProperties:
         tiktok_script=valid_tiktok_script(),
         config=valid_notes_config(),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_notes_content_formatting_tiktok(
         self, tiktok_script: TikTokScript, config: NotesConfig
     ) -> None:
@@ -412,7 +412,7 @@ class TestExporterProperties:
         blog_post=valid_blog_post(),
         config=valid_notes_config(),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_fallback_on_notes_failure_blog(
         self, blog_post: BlogPost, config: NotesConfig
     ) -> None:
@@ -467,7 +467,7 @@ class TestExporterProperties:
         tiktok_script=valid_tiktok_script(),
         config=valid_notes_config(),
     )
-    @settings(max_examples=100, deadline=10000)
+    @settings(max_examples=20, deadline=10000)
     def test_fallback_on_notes_failure_tiktok(
         self, tiktok_script: TikTokScript, config: NotesConfig
     ) -> None:

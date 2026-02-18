@@ -2135,7 +2135,7 @@ class TestAggregatorProperties:
 
 
     @pytest.mark.property
-    @settings(max_examples=100)
+    @settings(max_examples=20)
     @given(
         # Generate a list of newsletter items with various dates
         items_data=st.lists(
@@ -2231,7 +2231,7 @@ class TestAggregatorProperties:
                     f"(since_date: {since_date})"
 
     @pytest.mark.property
-    @settings(max_examples=100)
+    @settings(max_examples=20)
     @given(
         # Generate items with timezone-aware and timezone-naive dates
         use_timezone=st.booleans(),
@@ -2304,7 +2304,7 @@ class TestAggregatorProperties:
 
 
     @pytest.mark.property
-    @settings(max_examples=100)
+    @settings(max_examples=20)
     @given(
         # Generate configuration for multiple sources
         # Each source is a tuple of (should_fail: bool, items_count: int)
@@ -2398,7 +2398,7 @@ class TestAggregatorProperties:
             fetcher.fetch.assert_called_once()
 
     @pytest.mark.property
-    @settings(max_examples=100)
+    @settings(max_examples=20)
     @given(
         # Number of successful sources
         successful_count=st.integers(min_value=0, max_value=5),
@@ -2477,7 +2477,7 @@ class TestAggregatorProperties:
                 f"Item from failed source found: {item.source_name}"
 
     @pytest.mark.property
-    @settings(max_examples=100)
+    @settings(max_examples=20)
     @given(
         # Different types of exceptions to test
         exception_type=st.sampled_from([

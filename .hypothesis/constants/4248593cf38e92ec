@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/orchestrator.py
+# hypothesis_version: 6.151.2
+
+['AppConfig', 'ExecutionResult', 'aggregation', 'complete', 'error', 'export', 'generation', 'synthesis']
