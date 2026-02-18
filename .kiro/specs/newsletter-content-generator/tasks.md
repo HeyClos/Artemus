@@ -153,8 +153,8 @@ This plan implements a macOS Python application that aggregates tech newsletters
 - [x] 9. Checkpoint - Verify generators
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Implement Apple Notes exporter
-  - [ ] 10.1 Implement NotesExporter class
+- [x] 10. Implement Apple Notes exporter
+  - [x] 10.1 Implement NotesExporter class
     - Initialize macnotesapp.NotesApp
     - Implement _ensure_folder() to create folders if needed
     - Implement _format_for_notes() to prepare content with metadata
@@ -162,11 +162,11 @@ This plan implements a macOS Python application that aggregates tech newsletters
     - Implement _fallback_save() for local file backup
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 10.2 Write property test for notes content formatting
+  - [x] 10.2 Write property test for notes content formatting
     - **Property 11: Notes Content Formatting**
     - **Validates: Requirements 6.3, 6.4**
 
-  - [ ] 10.3 Write property test for fallback on notes failure
+  - [x] 10.3 Write property test for fallback on notes failure
     - **Property 12: Fallback on Notes Failure**
     - **Validates: Requirements 6.5**
 

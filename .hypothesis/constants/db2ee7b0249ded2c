@@ -1,0 +1,4 @@
+# file: /Users/los/Desktop/Code/Artemus/src/newsletter_generator/exporter.py
+# hypothesis_version: 6.151.2
+
+['%Y%m%d_%H%M%S', '%Y-%m-%d %H:%M:%S', '-', '---', 'Blog Post', 'BlogPost', 'ExportResult', 'METADATA', 'NotesConfig', 'TikTok Script', 'TikTokScript', '_', 'blog', 'content_type', 'duration_seconds', 'generated_at', 'id', 'sources', 'tiktok', 'utf-8', 'word_count']
