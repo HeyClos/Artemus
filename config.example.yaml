@@ -47,18 +47,73 @@ email_sources:
 # Fetch content from RSS/Atom feeds.
 # Great for tech blogs and news sites.
 rss_sources:
-  - name: TechCrunch               # Human-readable name for attribution
+  # --- Tech News ---
+  - name: Ars Technica
+    url: https://feeds.arstechnica.com/arstechnica/index
+  - name: TechCrunch
     url: https://techcrunch.com/feed/
-
-  - name: Hacker News
-    url: https://news.ycombinator.com/rss
-
+  - name: WIRED
+    url: https://www.wired.com/feed/rss
   - name: The Verge
     url: https://www.theverge.com/rss/index.xml
+  - name: Engadget
+    url: https://www.engadget.com/rss.xml
+  - name: VentureBeat
+    url: https://venturebeat.com/feed/
+  - name: CNET
+    url: https://www.cnet.com/rss/news/
+  - name: IEEE Spectrum
+    url: https://feeds.feedburner.com/IeeeSpectrumFullText
+  - name: Digital Trends
+    url: https://www.digitaltrends.com/feed/
+  - name: The Register
+    url: https://www.theregister.com/headlines.atom
+  - name: Hackaday
+    url: https://hackaday.com/blog/feed/
+  - name: MIT Technology Review
+    url: https://www.technologyreview.com/feed
+  - name: "O'Reilly Radar"
+    url: https://feeds.feedburner.com/oreilly/radar/atom
+  - name: GeekWire
+    url: https://www.geekwire.com/feed/
+  - name: Techdirt
+    url: https://feeds.feedburner.com/techdirt/feed
+  - name: Product Hunt
+    url: https://www.producthunt.com/feed
 
-  # Add more RSS feeds as needed:
-  # - name: Ars Technica
-  #   url: https://feeds.arstechnica.com/arstechnica/index
+  # --- Substack Newsletters ---
+  - name: SemiAnalysis
+    url: https://semianalysis.substack.com/feed
+  - name: The Pragmatic Engineer
+    url: https://pragmaticengineer.substack.com/feed
+  - name: ByteByteGo
+    url: https://bytebytego.substack.com/feed
+  - name: Exponential View
+    url: https://exponentialview.substack.com/feed
+  - name: Pirate Wires
+    url: https://piratewires.substack.com/feed
+  - name: Newcomer
+    url: https://newcomer.substack.com/feed
+  - name: User Mag
+    url: https://usermag.substack.com/feed
+
+  # --- Engineering Blogs (Medium & Company) ---
+  - name: Airbnb Engineering
+    url: https://medium.com/feed/airbnb-engineering
+  - name: Netflix TechBlog
+    url: https://netflixtechblog.com/feed
+  - name: Meta Engineering
+    url: https://engineering.fb.com/feed
+  - name: Spotify Engineering
+    url: https://engineering.atspotify.com/feed
+  - name: Towards Data Science
+    url: https://towardsdatascience.com/feed
+
+  # --- AI/ML Research ---
+  - name: Google Research Blog
+    url: https://research.google/blog/feed/
+  - name: DeepMind Blog
+    url: https://deepmind.com/blog/feed/basic/
 
 # Local File Sources
 # ------------------

@@ -1,0 +1,15 @@
+# User config (may contain credentials)
+config.yaml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Hypothesis test cache
+.hypothesis/
+
+# mypy / pytest
+.mypy_cache/
+.pytest_cache/
