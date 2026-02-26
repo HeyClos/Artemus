@@ -1,5 +1,6 @@
-# User config (may contain credentials)
+# User config and secrets
 config.yaml
+.env
 
 # Python
 __pycache__/
