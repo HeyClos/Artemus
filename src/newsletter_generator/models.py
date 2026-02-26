@@ -374,6 +374,8 @@ class ExecutionResult:
     dry_run: bool
     blog_exported: ExportResult | None = None
     tiktok_exported: ExportResult | None = None
+    blog_content: "BlogPost | None" = None
+    tiktok_content: "TikTokScript | None" = None
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize the ExecutionResult to a dictionary.

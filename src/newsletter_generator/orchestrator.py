@@ -272,6 +272,8 @@ class NewsletterContentGenerator:
                 dry_run=dry_run,
                 blog_exported=blog_exported,
                 tiktok_exported=tiktok_exported,
+                blog_content=blog_post,
+                tiktok_content=tiktok_script,
             )
             
         except Exception as e:

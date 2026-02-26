@@ -113,14 +113,7 @@ class BlogGenerator:
             
         except Exception as e:
             logger.error(f"Failed to generate blog post: {e}")
-            # Return a minimal blog post on failure
-            return BlogPost(
-                title="Tech Newsletter Roundup",
-                content=f"# Tech Newsletter Roundup\n\n{content.overall_summary}",
-                word_count=len(content.overall_summary.split()),
-                sources=self._collect_sources(content),
-                generated_at=datetime.now(),
-            )
+            raise RuntimeError(f"Blog post generation failed (LLM error): {e}") from e
     
     def _build_prompt(self, content: SynthesizedContent) -> str:
         """Build the LLM prompt based on configured format.
@@ -360,21 +353,7 @@ class TikTokScriptGenerator:
             
         except Exception as e:
             logger.error(f"Failed to generate TikTok script: {e}")
-            # Return a minimal script on failure
-            hook = f"Here's what's happening in tech this week!"
-            main_points = content.trending_themes[:3] if content.trending_themes else ["Tech news update"]
-            cta = "Follow for more tech updates!"
-            
-            return TikTokScript(
-                title="Tech Update",
-                hook=hook,
-                main_points=main_points,
-                call_to_action=cta,
-                visual_cues=["Show trending topics"] if self.config.include_visual_cues else None,
-                duration_seconds=self.config.duration,
-                full_script=f"{hook}\n\n" + "\n".join(main_points) + f"\n\n{cta}",
-                generated_at=datetime.now(),
-            )
+            raise RuntimeError(f"TikTok script generation failed (LLM error): {e}") from e
     
     def _build_prompt(self, content: SynthesizedContent) -> str:
         """Build the LLM prompt for script generation.

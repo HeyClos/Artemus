@@ -146,6 +146,23 @@ def run_command(config_path: str, dry_run: bool = False) -> int:
         print(f"\n❌ Pipeline execution failed: {e}")
         return 1
     
+    # Print generated content preview
+    if result.blog_content:
+        print(f"\n{'=' * 40}")
+        print("📝 Generated Blog Post")
+        print(f"{'=' * 40}")
+        print(f"Title: {result.blog_content.title}")
+        print(f"Word count: {result.blog_content.word_count}")
+        print(f"\n{result.blog_content.content}")
+    
+    if result.tiktok_content:
+        print(f"\n{'=' * 40}")
+        print("🎬 Generated TikTok Script")
+        print(f"{'=' * 40}")
+        print(f"Title: {result.tiktok_content.title}")
+        print(f"Duration: {result.tiktok_content.duration_seconds}s")
+        print(f"\n{result.tiktok_content.full_script}")
+    
     # Print results
     print(f"\n{'=' * 40}")
     print("Execution Summary")
