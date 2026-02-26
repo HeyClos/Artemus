@@ -86,7 +86,7 @@ class OpenAIClient:
         
         Args:
             api_key: OpenAI API key
-            model: Model identifier (e.g., "gpt-4o")
+            model: Model identifier (e.g., "gpt-5-nano")
             max_retries: Maximum number of retry attempts (default: 3)
             base_delay: Base delay in seconds for exponential backoff (default: 1.0)
             max_tokens: Maximum tokens for response (default: 4096)

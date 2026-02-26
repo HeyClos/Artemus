@@ -134,7 +134,7 @@ file_sources:
 
 llm:
   provider: openai                 # LLM provider: "openai" (more providers coming)
-  model: gpt-4o                    # Model to use (gpt-4o, gpt-4-turbo, gpt-3.5-turbo)
+  model: gpt-5-nano                # Model to use (gpt-5-nano, gpt-4o, gpt-4o-mini)
   api_key_env: OPENAI_API_KEY      # Environment variable containing API key
   max_tokens: 4096                 # Maximum tokens for LLM responses
 
